@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Django Calculator</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #9face6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.calculator {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 320px;
+}
+.display {
+    width: 100%;
+    height: 60px;
+    background: #f3f3f3;
+    border: none;
+    border-radius: 12px;
+    text-align: right;
+    font-size: 1.6em;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+button {
+    padding: 20px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 12px;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+button:hover { background: #ddd; }
+.operator { background: #6a5acd; color: white; font-weight: bold; }
+.operator:hover { background: #5a4acb; }
+.equal { grid-column: span 2; background: #ff5722; color: white; font-weight: bold; }
+.equal:hover { background: #e64a19; }
+.clear { background: #f44336; color: white; font-weight: bold; }
+.clear:hover { background: #d32f2f; }
+</style>
+</head>
+<body>
+<div class="calculator">
+    <form method="post" id="calcForm">
+        {% csrf_token %}
+        <input type="text" id="display" name="expression" class="display"
+               value="{% if result is not None %}{{ result }}{% endif %}">
+
+        <div class="buttons">
+            <!-- Numbers -->
+            <button type="button" onclick="appendValue('7')">7</button>
+            <button type="button" onclick="appendValue('8')">8</button>
+            <button type="button" onclick="appendValue('9')">9</button>
+            <button type="button" class="operator" onclick="appendValue('/')">÷</button>
+
+            <button type="button" onclick="appendValue('4')">4</button>
+            <button type="button" onclick="appendValue('5')">5</button>
+            <button type="button" onclick="appendValue('6')">6</button>
+            <button type="button" class="operator" onclick="appendValue('*')">×</button>
+
+            <button type="button" onclick="appendValue('1')">1</button>
+            <button type="button" onclick="appendValue('2')">2</button>
+            <button type="button" onclick="appendValue('3')">3</button>
+            <button type="button" class="operator" onclick="appendValue('-')">−</button>
+
+            <button type="button" onclick="appendValue('0')">0</button>
+            <button type="button" onclick="appendValue('.')">.</button>
+            <button type="button" class="clear" onclick="clearDisplay()">C</button>
+            <button type="button" class="operator" onclick="appendValue('+')">+</button>
+
+            <button type="submit" class="equal">=</button>
+        </div>
+    </form>
+</div>
+
+<script>
+const display = document.getElementById("display");
+
+// Append value when clicking buttons
+function appendValue(val) {
+    display.value += val;
+}
+
+// Clear display
+function clearDisplay() {
+    display.value = '';
+}
+
+// Keyboard input support
+display.addEventListener("keydown", function(event) {
+    const allowedKeys = "0123456789+-*/.";
+    if (!allowedKeys.includes(event.key) && event.key !== "Backspace" && event.key !== "Enter") {
+        event.preventDefault();
+    }
+    if (event.key === "Enter") {
+        document.getElementById("calcForm").submit();
+    }
+});
+</script>
+</body>
+</html>
